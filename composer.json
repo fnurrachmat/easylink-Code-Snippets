@@ -1,0 +1,25 @@
+{
+    "name": "easylink/easylink-php-sdk",
+    "description": "Easylink Integrator PHP SDK for easy merchant integration",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "EasylinkIntegrator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EasylinkIntegrator\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
