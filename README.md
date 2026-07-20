@@ -5,6 +5,8 @@
 
 Easylink Integrator PHP SDK adalah wrapper API resmi untuk memudahkan merchant berintegrasi dengan layanan pembayaran **Easylink**. SDK ini mengabstraksi kompleksitas autentikasi token, pembuatan signature digital (RSA SHA-256), serta penanganan request HTTP.
 
+> **English documentation is also available** — see the links in the [Documentation](#documentation) section below.
+
 ---
 
 ## Fitur Utama
@@ -27,17 +29,51 @@ Easylink Integrator PHP SDK adalah wrapper API resmi untuk memudahkan merchant b
 
 ## Instalasi
 
-Install SDK menggunakan Composer:
+### Opsi 1 — Via Packagist (Direkomendasikan)
+
+Pastikan sudah menginstall [Composer](https://getcomposer.org), lalu jalankan perintah berikut di root project Anda:
 
 ```bash
 composer require easylink/easylink-php-sdk
 ```
 
+Composer akan otomatis mendownload SDK dan semua dependensinya ke folder `vendor/`, serta men-generate autoloader.
+
+### Opsi 2 — Via VCS / GitHub (Private / Pre-release)
+
+Jika SDK belum dipublish ke Packagist, tambahkan konfigurasi berikut ke `composer.json` project Anda:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/your-org/easylink-php-sdk"
+        }
+    ],
+    "require": {
+        "easylink/easylink-php-sdk": "^1.0"
+    }
+}
+```
+
+Kemudian jalankan:
+
+```bash
+composer install
+```
+
+### Verifikasi Instalasi
+
+Pastikan autoloader Composer sudah di-require di file PHP Anda:
+
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+```
+
 ---
 
-## Cara Penggunaan
-
-### 1. Inisialisasi SDK Client
+## Inisialisasi SDK Client
 
 Gunakan kredensial API yang Anda dapatkan dari Dashboard Merchant Easylink. Anda juga perlu menyediakan RSA Private Key Anda (bisa berupa teks PEM langsung atau path ke file `.pem`).
 
@@ -57,135 +93,33 @@ $client = new Client($config);
 
 ---
 
-### 2. Payout Domestic (Transfer Domestik & E-Wallet)
+## Documentation
 
-Inisialisasi modul domestic payout dengan melewatkan `Client` yang telah dibuat:
+Dokumentasi penggunaan modul dibagi berdasarkan jenis transfer dan bahasa:
 
-```php
-use EasylinkIntegrator\Modules\PayoutDomestic;
+### 🏦 Payout Domestic (Transfer Domestik & E-Wallet)
 
-$payoutDomestic = new PayoutDomestic($client);
-```
+Transfer uang ke rekening bank lokal atau e-wallet di Indonesia (OVO, DANA, GOPAY, ShopeePay, dll).
 
-#### A. Cek Saldo Merchant
-```php
-try {
-    $balances = $payoutDomestic->getBalances();
-    print_r($balances);
-} catch (\EasylinkIntegrator\Exceptions\EasylinkException $e) {
-    echo "Gagal mengambil saldo: " . $e->getMessage();
-}
-```
+| Bahasa | Link |
+|--------|------|
+| 🇮🇩 Bahasa Indonesia | [README_domestic_id.md](README_domestic_id.md) |
+| 🇬🇧 English | [README_domestic_en.md](README_domestic_en.md) |
 
-#### B. Dapatkan Daftar Bank & E-Wallet yang Didukung
-```php
-// Daftar Bank Lokal
-$banks = $payoutDomestic->getSupportedBanks();
+### 🌍 Payout International (Remitansi / Cross-Border)
 
-// Daftar E-Wallet (OVO, DANA, GOPAY, ShopeePay, dll)
-$ewallets = $payoutDomestic->getSupportedEwallets();
-```
+Transfer uang ke rekening bank luar negeri menggunakan nilai tukar mata uang asing secara real-time.
 
-#### C. Verifikasi Rekening Bank (Inquiry)
-Sangat direkomendasikan melakukan verifikasi nama pemilik rekening sebelum melakukan transfer untuk meminimalkan salah transfer.
-```php
-try {
-    $response = $payoutDomestic->verifyBankAccount([
-        'account_number' => '1234567890',
-        'bank_id'        => '2', // ID bank dari getSupportedBanks()
-        'payment_method' => '1', // 1 = Bank Transfer, 2 = E-Wallet
-    ]);
-    
-    if ($response['code'] === 0) {
-        echo "Nama Pemilik: " . $response['data']['account_name'];
-    }
-} catch (\EasylinkIntegrator\Exceptions\EasylinkException $e) {
-    echo "Gagal verifikasi rekening: " . $e->getMessage();
-}
-```
-
-#### D. Lakukan Transfer (Domestic Payout)
-```php
-try {
-    $transfer = $payoutDomestic->createTransfer([
-        'reference'           => 'UNIQUE_TX_ID_' . time(),
-        'bank_id'             => '1', // ID bank/e-wallet target
-        'account_holder_name' => 'Nama Penerima',
-        'account_number'      => '888801000157508',
-        'amount'              => '50000', // Jumlah transfer dalam IDR
-        'payment_method'      => 1, // 1 = Bank, 2 = E-wallet
-        'description'         => 'Pembayaran Invoice #102',
-    ]);
-    
-    if ($transfer['code'] === 0) {
-        echo "Transfer berhasil diproses. ID Transaksi: " . $transfer['data']['disbursement_id'];
-    }
-} catch (\EasylinkIntegrator\Exceptions\EasylinkException $e) {
-    echo "Transfer gagal: " . $e->getMessage();
-    // Mendapatkan respon detail dari API Easylink
-    print_r($e->getResponsePayload());
-}
-```
-
-#### E. Cek Status Transaksi
-```php
-$status = $payoutDomestic->getDomesticTransfer([
-    'reference' => 'YOUR_TRANSACTION_REFERENCE_ID'
-]);
-print_r($status);
-```
+| Bahasa | Link |
+|--------|------|
+| 🇮🇩 Bahasa Indonesia | [README_international_id.md](README_international_id.md) |
+| 🇬🇧 English | [README_international_en.md](README_international_en.md) |
 
 ---
 
-### 3. Payout International (Transfer Internasional)
+## Verifikasi Webhook / Notifikasi Callback
 
-Inisialisasi modul international payout:
-
-```php
-use EasylinkIntegrator\Modules\PayoutInternational;
-
-$payoutInternational = new PayoutInternational($client);
-```
-
-#### A. Cek Kuotasi Kurs & Biaya (Get Quote)
-Sebelum melakukan transfer internasional, ambil harga tukar kurs terlebih dahulu.
-```php
-try {
-    $quote = $payoutInternational->getQuote([
-        'sourceCurrency' => 'IDR',
-        'targetCurrency' => 'USD',
-        'sourceAmount'   => '10000000', // 10 juta IDR
-    ]);
-    print_r($quote);
-} catch (\EasylinkIntegrator\Exceptions\EasylinkException $e) {
-    echo "Gagal mengambil kurs: " . $e->getMessage();
-}
-```
-
-#### B. Buat Transfer Internasional
-```php
-try {
-    $response = $payoutInternational->createTransfer([
-        'quote_id'            => 'QUOTE_ID_FROM_GET_QUOTE',
-        'reference'           => 'INT_TX_' . time(),
-        'beneficiary_name'    => 'John Doe',
-        'beneficiary_country' => 'USA',
-        'bank_name'           => 'JP Morgan Chase',
-        'account_number'      => '987654321',
-        'routing_number'      => '123456789', // Kode routing (SWIFT/ABA) sesuai negara target
-        // ... parameter tambahan lainnya sesuai kebutuhan API target negara
-    ]);
-    print_r($response);
-} catch (\EasylinkIntegrator\Exceptions\EasylinkException $e) {
-    echo "Gagal transfer internasional: " . $e->getMessage();
-}
-```
-
----
-
-### 4. Verifikasi Webhook/Notifikasi Callback
-
-Ketika status transaksi berubah, Easylink akan mengirimkan HTTP POST notifikasi callback ke server Anda. Anda wajib memverifikasi signature-nya untuk memastikan request benar-benar berasal dari Easylink.
+Ketika status transaksi berubah, Easylink akan mengirimkan HTTP POST ke server Anda. Verifikasi signature-nya untuk memastikan request benar-benar berasal dari Easylink.
 
 ```php
 // Ambil semua header request yang masuk
@@ -198,14 +132,12 @@ $easylinkPublicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ
 $isValid = $client->verifyNotificationSignature($headers, $easylinkPublicKey);
 
 if ($isValid) {
-    // Signature valid! Silakan proses status transaksi di database Anda.
+    // Signature valid! Proses payload di sini.
     $payload = json_decode(file_get_contents('php://input'), true);
-    
-    // Kirim respon sukses ke Easylink
     http_response_code(200);
     echo json_encode(['code' => 0, 'message' => 'Success']);
 } else {
-    // Signature tidak cocok, abaikan request ini
+    // Signature tidak cocok, tolak request
     http_response_code(400);
     echo json_encode(['code' => -1, 'message' => 'Invalid signature']);
 }
@@ -215,7 +147,7 @@ if ($isValid) {
 
 ## Penanganan Error (Error Handling)
 
-Setiap request yang gagal karena masalah jaringan, token kedaluwarsa, atau error validasi dari Easylink API akan melempar `EasylinkException`.
+Setiap request yang gagal akan melempar `EasylinkException`. Tangkap exception ini untuk mendapatkan detail error dari API.
 
 ```php
 use EasylinkIntegrator\Exceptions\EasylinkException;
@@ -223,15 +155,9 @@ use EasylinkIntegrator\Exceptions\EasylinkException;
 try {
     $balances = $payoutDomestic->getBalances();
 } catch (EasylinkException $e) {
-    // Pesan error umum
-    echo "Error: " . $e->getMessage() . "\n";
-    
-    // HTTP Status Code (misal: 400, 401, 500)
-    echo "HTTP Status: " . $e->getStatusCode() . "\n";
-    
-    // Payload respon dari API Easylink (jika ada)
-    echo "Respon API: ";
-    print_r($e->getResponsePayload());
+    echo "Error: "       . $e->getMessage()        . "\n";
+    echo "HTTP Status: " . $e->getStatusCode()     . "\n";
+    print_r($e->getResponsePayload()); // Payload respons dari Easylink API
 }
 ```
 
