@@ -1,168 +1,196 @@
-# Easylink Integrator PHP SDK
+# Easylink API Integration — Multi-Language Code Snippets
 
-[![PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)](https://php.net)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+Repositori ini berisi kumpulan **Code Snippets** siap pakai (*copy-paste ready*) yang dikategorikan berdasarkan modul **Domestic** dan **International** untuk mengintegrasikan **Easylink API** di berbagai bahasa pemrograman.
 
-Easylink Integrator PHP SDK adalah wrapper API resmi untuk memudahkan merchant berintegrasi dengan layanan pembayaran **Easylink**. SDK ini mengabstraksi kompleksitas autentikasi token, pembuatan signature digital (RSA SHA-256), serta penanganan request HTTP.
-
-> **English documentation is also available** — see the links in the [Documentation](#documentation) section below.
-
----
-
-## Fitur Utama
-
-- **Auto Authentication:** Secara otomatis mengambil dan memperbarui Access Token (berlaku 10 menit) sebelum kedaluwarsa.
-- **Auto Signature Generation:** Otomatis menghasilkan header `X-Signature` dan `X-EasyLink-Sign` menggunakan Private Key RSA merchant.
-- **Environment Switcher:** Pindah dengan mudah antara mode `sandbox` (testing) dan `production` (live).
-- **Modul Payout Lengkap:** Mendukung Payout Domestic (Transfer Lokal & E-Wallet) dan Payout International.
-- **Validasi Webhook:** Fungsi bawaan untuk memverifikasi keaslian signature notifikasi callback/webhook dari Easylink.
+Bahasa & Lingkungan yang Didukung:
+- 🐘 **PHP** (Native cURL + OpenSSL, tanpa Composer)
+- 🟢 **Node.js / JavaScript** (`crypto` module + `fetch`)
+- 🐍 **Python 3** (`cryptography` + `requests`)
+- 🔵 **Go / Golang** (`crypto/rsa` + `net/http`)
+- 🐚 **cURL / Bash** (`curl` + `openssl` CLI)
 
 ---
 
-## Persyaratan Sistem
+## 📂 Struktur Folder Project
 
-- PHP `>= 7.4` (Kompatibel dengan PHP 8.x)
-- Ekstensi PHP `openssl` (untuk pembuatan signature)
-- Ekstensi PHP `json`
+Setiap folder bahasa dikategorikan ke dalam subfolder modul API berikut:
+
+```text
+.
+├── php/
+│   ├── helpers.php
+│   ├── auth/
+│   │   └── get_access_token.php           # Request Access Token B2B
+│   ├── domestic/
+│   │   ├── 01_verify_bank_account.php      # Inquiry Rekening Bank
+│   │   ├── 02_create_domestic_transfer.php  # Transfer Lokal & E-Wallet
+│   │   ├── 03_get_domestic_transfer_status.php # Status Transfer Domestik
+│   │   ├── 04_get_balances.php             # Saldo Akun Merchant
+│   │   ├── 05_get_flows.php                # Mutasi Kas & Flow Akun
+│   │   ├── 06_get_remittance_list.php      # Daftar Transaksi Remitansi
+│   │   ├── 07_supported_banks.php          # Daftar Kode Bank Lokal
+│   │   └── 08_supported_ewallets.php       # Daftar Kode E-Wallet
+│   ├── international/
+│   │   ├── 01_get_quotes.php               # Inquiry Kurs & Quote
+│   │   ├── 02_create_int_transfer.php      # Transfer Remitansi Internasional
+│   │   ├── 03_confirm_int_transfer.php     # Konfirmasi Transfer Internasional
+│   │   ├── 04_get_int_transfer_status.php  # Status Transfer Internasional
+│   │   ├── 05_get_countries_currencies.php # Daftar Negara & Mata Uang
+│   │   ├── 06_get_currencies.php           # Daftar Currency & Satuan Minimum
+│   │   ├── 07_get_remittance_purposes.php  # Daftar Tujuan Remitansi
+│   │   ├── 08_get_sources_of_funds.php     # Daftar Sumber Dana
+│   │   └── 09_get_relationships.php        # Daftar Hubungan Pengirim-Penerima
+│   └── webhook/
+│       └── verify_signature.php            # Verifikasi RSA Signature Webhook Callback
+├── nodejs/                                # (Struktur sama seperti PHP)
+├── python/                                # (Struktur sama seperti PHP)
+├── go/                                    # (Struktur sama seperti PHP)
+└── curl/                                  # (Struktur sama seperti PHP)
+```
 
 ---
 
-## Instalasi
+## 🔐 Aturan Pembuatan RSA SHA-256 Signature
 
-### Opsi 1 — Via Packagist (Direkomendasikan)
+Setiap request ke API Easylink memerlukan header autentikasi & signature:
+- `Authorization: Bearer <ACCESS_TOKEN>`
+- `X-EasyLink-AppKey: <APP_KEY>`
+- `X-EasyLink-Nonce: <UNIQUE_NONCE>`
+- `X-EasyLink-Timestamp: <TIMESTAMP_IN_MS>`
+- `X-Signature: <BASE64_RSA_SHA256_SIGNATURE>`
+- `X-EasyLink-Sign: <BASE64_RSA_SHA256_SIGNATURE>`
 
-Pastikan sudah menginstall [Composer](https://getcomposer.org), lalu jalankan perintah berikut di root project Anda:
+---
+
+## ⚙️ Langkah Persiapan & Konfigurasi Kredensial
+
+Sebelum menjalankan snippet apapun, buka file snippet yang ingin Anda jalankan dan ganti variabel kredensial berikut dengan data merchant Anda dari Dashboard Easylink:
+
+- `$appId` / `app_id` : Merchant App ID
+- `$appSecret` / `app_secret` : Merchant App Secret
+- `$appKey` / `app_key` : Merchant App Key
+- `$privateKeyPem` / `private_key_pem` : Path ke file private key RSA Anda (`.pem`) atau string PEM langsung
+- `$accessToken` / `access_token` : Access Token yang didapatkan dari endpoint `auth/get_access_token`
+
+---
+
+## ⚡ Panduan Lengkap Menjalankan Snippet
+
+### 🐘 1. PHP (Native cURL)
+**Prasyarat:** PHP `>= 7.4` dengan ekstensi `curl` dan `openssl` terinstall.
 
 ```bash
-composer require easylink/easylink-php-sdk
+# Auth Access Token
+php php/auth/get_access_token.php
+
+# Domestic Payout
+php php/domestic/01_verify_bank_account.php
+php php/domestic/02_create_domestic_transfer.php
+php php/domestic/03_get_domestic_transfer_status.php
+php php/domestic/04_get_balances.php
+php php/domestic/05_get_flows.php
+php php/domestic/06_get_remittance_list.php
+php php/domestic/07_supported_banks.php
+php php/domestic/08_supported_ewallets.php
+
+# International Payout
+php php/international/01_get_quotes.php
+php php/international/02_create_int_transfer.php
+php php/international/03_confirm_int_transfer.php
+php php/international/04_get_int_transfer_status.php
+php php/international/05_get_countries_currencies.php
+php php/international/06_get_currencies.php
+php php/international/07_get_remittance_purposes.php
+php php/international/08_get_sources_of_funds.php
+php php/international/09_get_relationships.php
+
+# Webhook Verification
+php php/webhook/verify_signature.php
 ```
 
-Composer akan otomatis mendownload SDK dan semua dependensinya ke folder `vendor/`, serta men-generate autoloader.
+---
 
-### Opsi 2 — Via VCS / GitHub (Private / Pre-release)
-
-Jika SDK belum dipublish ke Packagist, tambahkan konfigurasi berikut ke `composer.json` project Anda:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/your-org/easylink-php-sdk"
-        }
-    ],
-    "require": {
-        "easylink/easylink-php-sdk": "^1.0"
-    }
-}
-```
-
-Kemudian jalankan:
+### 🟢 2. Node.js / JavaScript
+**Prasyarat:** Node.js `>= 18.0`.
 
 ```bash
-composer install
-```
+# Auth Access Token
+node nodejs/auth/get_access_token.js
 
-### Verifikasi Instalasi
+# Domestic Payout
+node nodejs/domestic/01_verify_bank_account.js
+node nodejs/domestic/02_create_domestic_transfer.js
 
-Pastikan autoloader Composer sudah di-require di file PHP Anda:
+# International Payout
+node nodejs/international/01_get_quotes.js
+node nodejs/international/02_create_int_transfer.js
 
-```php
-require_once __DIR__ . '/vendor/autoload.php';
-```
-
----
-
-## Inisialisasi SDK Client
-
-Gunakan kredensial API yang Anda dapatkan dari Dashboard Merchant Easylink. Anda juga perlu menyediakan RSA Private Key Anda (bisa berupa teks PEM langsung atau path ke file `.pem`).
-
-```php
-use EasylinkIntegrator\Client;
-
-$config = [
-    'appId'       => 'YOUR_APP_ID',
-    'appSecret'   => 'YOUR_APP_SECRET',
-    'appKey'      => 'YOUR_APP_KEY',
-    'privateKey'  => '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANB...', // Isi PEM key atau path file '/path/to/private.pem'
-    'environment' => 'sandbox', // Ganti dengan 'production' untuk live env
-];
-
-$client = new Client($config);
+# Webhook Verification
+node nodejs/webhook/verify_signature.js
 ```
 
 ---
 
-## Documentation
+### 🐍 3. Python 3
+**Prasyarat:** Python `>= 3.8`. Install package pendukung jika belum ada:
+```bash
+pip install requests cryptography
+```
 
-Dokumentasi penggunaan modul dibagi berdasarkan jenis transfer dan bahasa:
+```bash
+# Auth Access Token
+python3 python/auth/get_access_token.py
 
-### 🏦 Payout Domestic (Transfer Domestik & E-Wallet)
+# Domestic Payout
+python3 python/domestic/01_verify_bank_account.py
+python3 python/domestic/02_create_domestic_transfer.py
 
-Transfer uang ke rekening bank lokal atau e-wallet di Indonesia (OVO, DANA, GOPAY, ShopeePay, dll).
+# International Payout
+python3 python/international/01_get_quotes.py
+python3 python/international/02_create_int_transfer.py
 
-| Bahasa | Link |
-|--------|------|
-| 🇮🇩 Bahasa Indonesia | [README_domestic_id.md](README_domestic_id.md) |
-| 🇬🇧 English | [README_domestic_en.md](README_domestic_en.md) |
-
-### 🌍 Payout International (Remitansi / Cross-Border)
-
-Transfer uang ke rekening bank luar negeri menggunakan nilai tukar mata uang asing secara real-time.
-
-| Bahasa | Link |
-|--------|------|
-| 🇮🇩 Bahasa Indonesia | [README_international_id.md](README_international_id.md) |
-| 🇬🇧 English | [README_international_en.md](README_international_en.md) |
-
----
-
-## Verifikasi Webhook / Notifikasi Callback
-
-Ketika status transaksi berubah, Easylink akan mengirimkan HTTP POST ke server Anda. Verifikasi signature-nya untuk memastikan request benar-benar berasal dari Easylink.
-
-```php
-// Ambil semua header request yang masuk
-$headers = getallheaders();
-
-// Masukkan Public Key Easylink (didapatkan dari Dashboard Easylink)
-$easylinkPublicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...\n-----END PUBLIC KEY-----";
-
-// Verifikasi signature
-$isValid = $client->verifyNotificationSignature($headers, $easylinkPublicKey);
-
-if ($isValid) {
-    // Signature valid! Proses payload di sini.
-    $payload = json_decode(file_get_contents('php://input'), true);
-    http_response_code(200);
-    echo json_encode(['code' => 0, 'message' => 'Success']);
-} else {
-    // Signature tidak cocok, tolak request
-    http_response_code(400);
-    echo json_encode(['code' => -1, 'message' => 'Invalid signature']);
-}
+# Webhook Verification
+python3 python/webhook/verify_signature.py
 ```
 
 ---
 
-## Penanganan Error (Error Handling)
+### 🔵 4. Go (Golang)
+**Prasyarat:** Go `>= 1.18`.
 
-Setiap request yang gagal akan melempar `EasylinkException`. Tangkap exception ini untuk mendapatkan detail error dari API.
+```bash
+# Auth Access Token
+go run go/auth/helpers.go go/auth/get_access_token.go
 
-```php
-use EasylinkIntegrator\Exceptions\EasylinkException;
+# Domestic Payout
+go run go/domestic/helpers.go go/domestic/01_verify_bank_account.go
+go run go/domestic/helpers.go go/domestic/02_create_domestic_transfer.go
 
-try {
-    $balances = $payoutDomestic->getBalances();
-} catch (EasylinkException $e) {
-    echo "Error: "       . $e->getMessage()        . "\n";
-    echo "HTTP Status: " . $e->getStatusCode()     . "\n";
-    print_r($e->getResponsePayload()); // Payload respons dari Easylink API
-}
+# International Payout
+go run go/international/helpers.go go/international/01_get_quotes.go
+go run go/international/helpers.go go/international/02_create_int_transfer.go
+
+# Webhook Verification
+go run go/webhook/verify_signature.go
 ```
 
 ---
 
-## Lisensi
+### 🐚 5. cURL / Bash
+**Prasyarat:** Terminal Bash & OpenSSL CLI (`openssl`).
 
-Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
+```bash
+# Auth Access Token
+bash curl/auth/get_access_token.sh
+
+# Domestic Payout
+bash curl/domestic/01_verify_bank_account.sh
+bash curl/domestic/02_create_domestic_transfer.sh
+
+# International Payout
+bash curl/international/01_get_quotes.sh
+bash curl/international/02_create_int_transfer.sh
+
+# Webhook Verification
+bash curl/webhook/verify_signature.sh
+```
