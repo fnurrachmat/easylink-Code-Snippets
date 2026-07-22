@@ -3,3 +3,6 @@
 /PRD.md
 /manual_test_results.txt
 /run_manual_test.php
+*.pem
+*.key
+.env
