@@ -8,10 +8,10 @@ import (
 
 func main() {
 	baseURL := "https://sandbox.easylink.id"
-	appID := "lQNJ0nL07Ucmemaa"
-	appSecret := "HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4"
-	appKey := "3f9a7f74-de23-4fde-af75-da7684528a59"
-	privateKeyPem := "../../private_key.pem"
+	appID := "YOUR_APP_ID"
+	appSecret := "YOUR_APP_SECRET"
+	appKey := "YOUR_APP_KEY"
+	privateKeyPem := "/path/to/private_key.pem"
 
 	accessToken, err := GetAccessToken(baseURL, appID, appSecret)
 	if err != nil {

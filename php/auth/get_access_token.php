@@ -6,8 +6,8 @@ require_once __DIR__ . '/../helpers.php';
 
 // --- Configuration ---
 $baseUrl   = 'https://sandbox.easylink.id'; // Use 'https://openapi.easylink.id' for Production
-$appId     = 'lQNJ0nL07Ucmemaa';
-$appSecret = 'HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4';
+$appId     = 'YOUR_APP_ID';
+$appSecret = 'YOUR_APP_SECRET';
 
 /**
  * Request Access Token

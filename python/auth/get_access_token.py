@@ -5,8 +5,8 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from helpers import send_easylink_request
 
 base_url   = 'https://sandbox.easylink.id'
-app_id     = 'lQNJ0nL07Ucmemaa'
-app_secret = 'HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4'
+app_id     = 'YOUR_APP_ID'
+app_secret = 'YOUR_APP_SECRET'
 
 def get_access_token(base_url: str, app_id: str, app_secret: str) -> str:
     response = send_easylink_request(

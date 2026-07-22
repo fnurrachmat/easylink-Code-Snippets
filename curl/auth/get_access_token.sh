@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 BASE_URL="https://sandbox.easylink.id"
-APP_ID="lQNJ0nL07Ucmemaa"
-APP_SECRET="HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4"
+APP_ID="YOUR_APP_ID"
+APP_SECRET="YOUR_APP_SECRET"
 
 echo "Requesting Access Token..."
 

@@ -101,8 +101,8 @@ def verify_easylink_webhook_signature(
                 Path(sig_bin_path).unlink()
 
 # --- Example Webhook Notification Handler & Demo Execution ---
-app_key         = '3f9a7f74-de23-4fde-af75-da7684528a59'
-private_key_pem = str(Path(__file__).resolve().parent.parent.parent / 'private_key.pem')
+app_key         = 'YOUR_APP_KEY'
+private_key_pem = '/path/to/private_key.pem'
 
 if not Path(private_key_pem).exists():
     private_key_pem = 'private_key.pem'
