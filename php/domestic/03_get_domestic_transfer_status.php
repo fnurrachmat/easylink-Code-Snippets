@@ -15,7 +15,7 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 $payload = [
-    'partner_reference_no' => 'REF-1700000000'
+    'reference' => 'REF-1784708547'
 ];
 
 echo "Querying Domestic Transfer Status...\n";

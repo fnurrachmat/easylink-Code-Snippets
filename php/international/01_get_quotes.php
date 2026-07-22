@@ -15,9 +15,9 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 $payload = [
-    'source_currency' => 'IDR',
-    'target_currency' => 'SGD',
-    'amount'          => 1000000
+    'source_currency'      => 'IDR',
+    'destination_currency' => 'SGD',
+    'amount'               => 1000000
 ];
 
 echo "Fetching Quote...\n";
