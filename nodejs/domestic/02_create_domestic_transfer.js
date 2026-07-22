@@ -10,11 +10,11 @@ const privateKeyPem = `${__dirname}/../../private_key.pem`;
   try {
     const accessToken = await getAccessToken(baseUrl, appId, appSecret);
     const payload = {
-      partner_reference_no: `REF-${Date.now()}`,
+      reference: `REF-${Date.now()}`,
       amount: 100000,
-      bank_code: 'BCA',
+      bank_id: '1',
       account_number: '1234567890',
-      recipient_name: 'John Doe',
+      account_holder_name: 'John Doe',
       remark: 'Payment for Order #1001',
     };
 

@@ -15,12 +15,12 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 $payload = [
-    'partner_reference_no' => 'REF-' . time(),
-    'amount'               => 100000,
-    'bank_code'             => 'BCA',
-    'account_number'        => '1234567890',
-    'recipient_name'        => 'John Doe',
-    'remark'               => 'Payment for Order #1001'
+    'reference'           => 'REF-' . time(),
+    'amount'              => 100000,
+    'bank_id'             => '1', // 1 for BCA (Check supported-bank-code)
+    'account_number'      => '1234567890',
+    'account_holder_name' => 'John Doe',
+    'remark'              => 'Payment for Order #1001'
 ];
 
 echo "Creating Domestic Transfer...\n";
