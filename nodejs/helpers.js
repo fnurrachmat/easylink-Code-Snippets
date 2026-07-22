@@ -15,6 +15,42 @@ function phpUrlEncode(str) {
 }
 
 /**
+ * Requests a fresh B2B Access Token from Easylink API.
+ */
+async function getAccessToken(baseUrl, appId, appSecret) {
+  const response = await sendEasylinkRequest(
+    baseUrl,
+    '/get-access-token',
+    'POST',
+    {
+      app_id: appId,
+      app_secret: appSecret,
+    },
+    '',
+    ''
+  );
+
+  if (response.status !== 200) {
+    throw new Error(`Failed to get token: ${JSON.stringify(response)}`);
+  }
+
+  const data = response.data;
+  let token = null;
+
+  if (typeof data.data === 'string') {
+    token = data.data;
+  } else {
+    token = data.accessToken || data.access_token || (data.data && (data.data.accessToken || data.data.access_token));
+  }
+
+  if (!token) {
+    throw new Error(`Access token not found in response: ${JSON.stringify(data)}`);
+  }
+
+  return token;
+}
+
+/**
  * Generates Easylink RSA-SHA256 signature.
  */
 function generateEasylinkSignature(appKey, nonce, timestamp, body, privateKeyPem) {
@@ -32,14 +68,9 @@ function generateEasylinkSignature(appKey, nonce, timestamp, body, privateKeyPem
     }
   }
 
-  // Sort keys alphabetically by ASCII value
   const sortedKeys = Object.keys(params).sort();
-
-  // Create key=value pairs with urlencode
   const pairs = sortedKeys.map((key) => `${key}=${phpUrlEncode(params[key])}`);
   const originalString = pairs.join('&');
-
-  // Sandwich string with appKey
   const stringToSign = `${appKey}${originalString}${appKey}`;
 
   let pem = privateKeyPem;
@@ -96,6 +127,7 @@ async function sendEasylinkRequest(baseUrl, endpoint, method, payload, appKey, p
 }
 
 module.exports = {
+  getAccessToken,
   generateEasylinkSignature,
   sendEasylinkRequest,
   phpUrlEncode,

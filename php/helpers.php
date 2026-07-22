@@ -3,6 +3,49 @@
 declare(strict_types=1);
 
 /**
+ * Requests a fresh B2B Access Token from Easylink API.
+ *
+ * @param string $baseUrl Base API URL
+ * @param string $appId Merchant App ID
+ * @param string $appSecret Merchant App Secret
+ * @return string Access Token JWT
+ */
+function getAccessToken(string $baseUrl, string $appId, string $appSecret): string {
+    $response = sendEasylinkRequest(
+        $baseUrl,
+        '/get-access-token',
+        'POST',
+        [
+            'app_id'     => $appId,
+            'app_secret' => $appSecret,
+        ],
+        '',
+        ''
+    );
+
+    if ($response['status_code'] !== 200) {
+        throw new Exception("Failed to get token: " . json_encode($response));
+    }
+
+    $data = $response['data'];
+    if (isset($data['data']) && is_string($data['data'])) {
+        $token = $data['data'];
+    } else {
+        $token = $data['accessToken'] 
+            ?? $data['access_token'] 
+            ?? $data['data']['accessToken'] 
+            ?? $data['data']['access_token'] 
+            ?? null;
+    }
+
+    if (!$token) {
+        throw new Exception("Access token not found in response: " . json_encode($data));
+    }
+
+    return (string) $token;
+}
+
+/**
  * Generates Easylink RSA-SHA256 signature.
  *
  * @param string $appKey Merchant App Key
@@ -19,7 +62,6 @@ function generateEasylinkSignature(
     array $body,
     string $privateKeyPem
 ): string {
-    // 1. Gather all header parameters and body parameters
     $params = [
         'X-EasyLink-AppKey' => $appKey,
         'X-EasyLink-Nonce' => $nonce,
@@ -34,29 +76,23 @@ function generateEasylinkSignature(
         }
     }
 
-    // 2. Sort parameters alphabetically by key (ASCII order)
     ksort($params, SORT_STRING);
 
-    // 3. Concatenate key=value joined by & with urlencode
     $pairs = [];
     foreach ($params as $key => $value) {
         $pairs[] = "{$key}=" . urlencode((string) $value);
     }
     $originalString = implode('&', $pairs);
-
-    // 4. Sandwich with appKey at start and end
     $stringToSign = $appKey . $originalString . $appKey;
 
-    // 5. Read private key if path is provided
     if (strpos($privateKeyPem, '-----BEGIN') === false && file_exists($privateKeyPem)) {
         $privateKeyPem = file_get_contents($privateKeyPem);
     }
 
-    // 6. Sign using RSA-SHA256
     $signature = '';
     $success = openssl_sign($stringToSign, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
     if (!$success) {
-        throw new Exception("OpenSSL failed to sign data. Please verify your private key.");
+        throw new Exception("OpenSSL failed to sign data. Please verify your private key format and path.");
     }
 
     return base64_encode($signature);

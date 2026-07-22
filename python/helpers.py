@@ -12,6 +12,34 @@ def php_url_encode(val: str) -> str:
     """Matches PHP's urlencode (spaces encoded as '+')."""
     return urllib.parse.quote_plus(str(val))
 
+def get_access_token(base_url: str, app_id: str, app_secret: str) -> str:
+    """Requests a fresh B2B Access Token from Easylink API."""
+    response = send_easylink_request(
+        base_url,
+        '/get-access-token',
+        'POST',
+        {
+            'app_id': app_id,
+            'app_secret': app_secret
+        },
+        '',
+        ''
+    )
+
+    if response['status_code'] != 200:
+        raise Exception(f"Failed to get token: {response}")
+
+    data = response['data']
+    if isinstance(data.get('data'), str):
+        token = data['data']
+    else:
+        token = data.get('accessToken') or data.get('access_token') or (data.get('data') and (data.get('data').get('accessToken') or data.get('data').get('access_token')))
+
+    if not token:
+        raise Exception(f"Access token not found in response: {data}")
+
+    return token
+
 def generate_easylink_signature(app_key: str, nonce: str, timestamp: str, body: dict, private_key_pem: str) -> str:
     """Generates Easylink RSA-SHA256 signature."""
     params = {
@@ -26,11 +54,9 @@ def generate_easylink_signature(app_key: str, nonce: str, timestamp: str, body: 
         else:
             params[k] = str(v)
 
-    # Sort keys alphabetically by ASCII
     sorted_keys = sorted(params.keys())
     pairs = [f"{k}={php_url_encode(params[k])}" for k in sorted_keys]
     original_string = "&".join(pairs)
-
     string_to_sign = f"{app_key}{original_string}{app_key}"
 
     if "-----BEGIN" not in private_key_pem and Path(private_key_pem).exists():

@@ -6,9 +6,13 @@ require_once __DIR__ . '/../helpers.php';
 
 // --- Configuration ---
 $baseUrl       = 'https://sandbox.easylink.id';
+$appId         = 'YOUR_APP_ID';
+$appSecret     = 'YOUR_APP_SECRET';
 $appKey        = 'YOUR_APP_KEY';
 $privateKeyPem = '/path/to/private.pem';
-$accessToken   = 'YOUR_ACCESS_TOKEN';
+
+// Auto-fetch Access Token
+$accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 echo "Fetching Account Balances...\n";
 try {
