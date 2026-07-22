@@ -47,6 +47,7 @@ function getAccessToken(string $baseUrl, string $appId, string $appSecret): stri
 
 /**
  * Generates Easylink RSA-SHA256 signature.
+ * Supports flat and nested dot-notation body parameters.
  *
  * @param string $appKey Merchant App Key
  * @param string $nonce Unique request nonce
@@ -70,7 +71,11 @@ function generateEasylinkSignature(
 
     foreach ($body as $key => $value) {
         if (is_array($value)) {
-            $params[$key] = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            foreach ($value as $k2 => $v2) {
+                if (!is_array($v2)) {
+                    $params["{$key}.{$k2}"] = (string) $v2;
+                }
+            }
         } else {
             $params[$key] = (string) $value;
         }
@@ -85,7 +90,6 @@ function generateEasylinkSignature(
     $originalString = implode('&', $pairs);
     $stringToSign = $appKey . $originalString . $appKey;
 
-    // Validate and load Private Key
     if (strpos($privateKeyPem, '-----BEGIN') === false) {
         if (file_exists($privateKeyPem)) {
             $keyContent = file_get_contents($privateKeyPem);

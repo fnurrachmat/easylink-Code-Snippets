@@ -15,16 +15,40 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 $payload = [
-    'partner_reference_no' => 'INT-' . time(),
-    'sender_country'       => 'ID',
-    'receiver_country'     => 'SG',
-    'source_currency'      => 'IDR',
-    'target_currency'      => 'SGD',
-    'amount'               => 1000000,
-    'recipient_name'       => 'Alice Smith',
-    'account_number'       => '9876543210',
-    'bank_name'            => 'DBS Bank',
-    'swift_code'           => 'DBSSSGSG'
+    'reference' => 'INT-' . time(),
+    'source' => [
+        'country'                     => 'IDN',
+        'currency'                    => 'IDR',
+        'segment'                     => 'business',
+        'company_name'                => 'PT Merchant Indonesia',
+        'company_trading_name'        => 'Merchant ID',
+        'company_registration_number' => '123456789',
+        'company_registration_country'=> 'IDN',
+        'address_line'                => 'Jl. Sudirman No. 1',
+        'address_city'                => 'Jakarta',
+        'address_country'             => 'IDN'
+    ],
+    'destination' => [
+        'country'                  => 'SGP',
+        'currency'                 => 'SGD',
+        'segment'                  => 'business',
+        'beneficiary_account_type' => 'Bank Account',
+        'company_name'             => 'DBS Bank Corporate',
+        'swift_code'               => 'DBSSSGSG',
+        'bank_account_number'      => '9876543210',
+        'address_line'             => '12 Marina Boulevard',
+        'address_city'             => 'Singapore',
+        'address_country'          => 'SGP',
+        'source_of_income_code'    => '01',
+        'purpose_code'             => '01',
+        'relation_code'            => '04'
+    ],
+    'transaction' => [
+        'amount'               => 1000000,
+        'destination_amount'   => 35,
+        'destination_country'  => 'SGP',
+        'destination_currency' => 'SGD'
+    ]
 ];
 
 echo "Creating International Transfer...\n";
