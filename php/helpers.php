@@ -85,14 +85,23 @@ function generateEasylinkSignature(
     $originalString = implode('&', $pairs);
     $stringToSign = $appKey . $originalString . $appKey;
 
-    if (strpos($privateKeyPem, '-----BEGIN') === false && file_exists($privateKeyPem)) {
-        $privateKeyPem = file_get_contents($privateKeyPem);
+    // Validate and load Private Key
+    if (strpos($privateKeyPem, '-----BEGIN') === false) {
+        if (file_exists($privateKeyPem)) {
+            $keyContent = file_get_contents($privateKeyPem);
+            if ($keyContent === false) {
+                throw new Exception("Unable to read private key file at path: {$privateKeyPem}");
+            }
+            $privateKeyPem = $keyContent;
+        } else {
+            throw new Exception("Private key file not found at: '{$privateKeyPem}'. Please set \$privateKeyPem to a valid .pem file path or PEM key string.");
+        }
     }
 
     $signature = '';
-    $success = openssl_sign($stringToSign, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
+    $success = @openssl_sign($stringToSign, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
     if (!$success) {
-        throw new Exception("OpenSSL failed to sign data. Please verify your private key format and path.");
+        throw new Exception("OpenSSL failed to sign data. Please verify your RSA private key content or file format.");
     }
 
     return base64_encode($signature);
