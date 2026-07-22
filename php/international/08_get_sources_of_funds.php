@@ -14,13 +14,18 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 // Auto-fetch Access Token
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
+$payload = [
+    'destination_country' => 'SG',
+    'segment'             => 'business'
+];
+
 echo "Fetching Sources of Funds...\n";
 try {
     $res = sendEasylinkRequest(
         $baseUrl,
         '/data/get-sources-of-funds',
         'POST',
-        [],
+        $payload,
         $appKey,
         $privateKeyPem,
         $accessToken

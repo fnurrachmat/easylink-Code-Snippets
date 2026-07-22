@@ -14,13 +14,17 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 // Auto-fetch Access Token
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
+$payload = [
+    'segment' => 'business'
+];
+
 echo "Fetching Relationships...\n";
 try {
     $res = sendEasylinkRequest(
         $baseUrl,
         '/data/get-relationships',
         'POST',
-        [],
+        $payload,
         $appKey,
         $privateKeyPem,
         $accessToken

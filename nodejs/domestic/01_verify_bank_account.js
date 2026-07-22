@@ -1,18 +1,20 @@
-const { sendEasylinkRequest } = require('../helpers');
+const { sendEasylinkRequest, getAccessToken } = require('../helpers');
 
 const baseUrl       = 'https://sandbox.easylink.id';
-const appKey        = 'YOUR_APP_KEY';
-const privateKeyPem = '/path/to/private.pem';
-const accessToken   = 'YOUR_ACCESS_TOKEN';
+const appId         = 'lQNJ0nL07Ucmemaa';
+const appSecret     = 'HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4';
+const appKey        = '3f9a7f74-de23-4fde-af75-da7684528a59';
+const privateKeyPem = `${__dirname}/../../private_key.pem`;
 
 (async () => {
-  const payload = {
-    bankCode: 'BCA',
-    accountNumber: '1234567890',
-  };
-
-  console.log('Verifying Bank Account...');
   try {
+    const accessToken = await getAccessToken(baseUrl, appId, appSecret);
+    const payload = {
+      account_number: '1234567890',
+      bank_id: 'BCA',
+    };
+
+    console.log('Verifying Bank Account...');
     const res = await sendEasylinkRequest(
       baseUrl,
       '/v2/transfer/verify-bank-account',

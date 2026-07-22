@@ -14,13 +14,19 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 // Auto-fetch Access Token
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
+$payload = [
+    'destination_country'      => 'SG',
+    'segment'                  => 'business',
+    'beneficiary_account_type' => 'bank_account'
+];
+
 echo "Fetching Remittance Purposes...\n";
 try {
     $res = sendEasylinkRequest(
         $baseUrl,
         '/data/get-remittance-purposes',
         'POST',
-        [],
+        $payload,
         $appKey,
         $privateKeyPem,
         $accessToken
