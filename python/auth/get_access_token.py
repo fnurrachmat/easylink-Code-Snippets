@@ -14,8 +14,6 @@ def get_access_token(base_url: str, app_id: str, app_secret: str) -> str:
         '/get-access-token',
         'POST',
         {
-            'appId': app_id,
-            'appSecret': app_secret,
             'app_id': app_id,
             'app_secret': app_secret
         },

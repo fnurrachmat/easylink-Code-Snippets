@@ -13,8 +13,6 @@ const (
 
 func GetAccessToken(baseURL, appID, appSecret string) (string, error) {
 	payload := map[string]interface{}{
-		"appId":      appID,
-		"appSecret":  appSecret,
 		"app_id":     appID,
 		"app_secret": appSecret,
 	}

@@ -19,8 +19,6 @@ function getAccessToken(string $baseUrl, string $appId, string $appSecret): stri
         '/get-access-token',
         'POST',
         [
-            'appId'      => $appId,
-            'appSecret'  => $appSecret,
             'app_id'     => $appId,
             'app_secret' => $appSecret,
         ],

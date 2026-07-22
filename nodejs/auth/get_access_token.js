@@ -10,8 +10,6 @@ async function getAccessToken(baseUrl, appId, appSecret) {
     '/get-access-token',
     'POST',
     {
-      appId,
-      appSecret,
       app_id: appId,
       app_secret: appSecret,
     },
