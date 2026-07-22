@@ -4,22 +4,27 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../helpers.php';
 
+// --- Configuration ---
 $baseUrl       = 'https://sandbox.easylink.id';
-$appKey        = 'YOUR_APP_KEY';
-$privateKeyPem = '/path/to/private.pem';
-$accessToken   = 'YOUR_ACCESS_TOKEN';
+$appId         = 'lQNJ0nL07Ucmemaa';
+$appSecret     = 'HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4';
+$appKey        = '3f9a7f74-de23-4fde-af75-da7684528a59';
+$privateKeyPem = __DIR__ . '/../../private_key.pem';
+
+// Auto-fetch Access Token
+$accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 $payload = [
-    'partnerReferenceNo' => 'INT-' . time(),
-    'senderCountry'      => 'ID',
-    'receiverCountry'    => 'SG',
-    'sourceCurrency'     => 'IDR',
-    'targetCurrency'     => 'SGD',
-    'amount'             => 1000000,
-    'recipientName'      => 'Alice Smith',
-    'accountNumber'      => '9876543210',
-    'bankName'           => 'DBS Bank',
-    'swiftCode'          => 'DBSSSGSG'
+    'partner_reference_no' => 'INT-' . time(),
+    'sender_country'       => 'ID',
+    'receiver_country'     => 'SG',
+    'source_currency'      => 'IDR',
+    'target_currency'      => 'SGD',
+    'amount'               => 1000000,
+    'recipient_name'       => 'Alice Smith',
+    'account_number'       => '9876543210',
+    'bank_name'            => 'DBS Bank',
+    'swift_code'           => 'DBSSSGSG'
 ];
 
 echo "Creating International Transfer...\n";
