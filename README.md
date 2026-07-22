@@ -1,5 +1,8 @@
 # Easylink API Integration — Multi-Language Code Snippets
 
+[![Language: Indonesian](https://img.shields.io/badge/Language-Bahasa_Indonesia-blue.svg)](README.md)
+[![Language: English](https://img.shields.io/badge/Language-English-green.svg)](README_EN.md)
+
 Repositori ini berisi kumpulan **Code Snippets** siap pakai (*copy-paste ready*) yang dikategorikan berdasarkan modul **Domestic** dan **International** untuk mengintegrasikan **Easylink API** di berbagai bahasa pemrograman.
 
 Bahasa & Lingkungan yang Didukung:
