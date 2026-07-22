@@ -6,8 +6,8 @@ require_once __DIR__ . '/../helpers.php';
 
 // --- Configuration ---
 $baseUrl   = 'https://sandbox.easylink.id'; // Use 'https://openapi.easylink.id' for Production
-$appId     = 'YOUR_APP_ID';
-$appSecret = 'YOUR_APP_SECRET';
+$appId     = 'lQNJ0nL07Ucmemaa';
+$appSecret = 'HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4';
 
 /**
  * Request Access Token
@@ -19,8 +19,10 @@ function getAccessToken(string $baseUrl, string $appId, string $appSecret): stri
         '/get-access-token',
         'POST',
         [
-            'appId'     => $appId,
-            'appSecret' => $appSecret,
+            'appId'      => $appId,
+            'appSecret'  => $appSecret,
+            'app_id'     => $appId,
+            'app_secret' => $appSecret,
         ],
         '',
         ''
@@ -31,10 +33,20 @@ function getAccessToken(string $baseUrl, string $appId, string $appSecret): stri
     }
 
     $data = $response['data'];
-    $token = $data['accessToken'] ?? $data['access_token'] ?? $data['data']['accessToken'] ?? null;
+    
+    // Check for string token in data['data'] or object keys
+    if (isset($data['data']) && is_string($data['data'])) {
+        $token = $data['data'];
+    } else {
+        $token = $data['accessToken'] 
+            ?? $data['access_token'] 
+            ?? $data['data']['accessToken'] 
+            ?? $data['data']['access_token'] 
+            ?? null;
+    }
 
     if (!$token) {
-        throw new Exception("Access token not found in response.");
+        throw new Exception("Access token not found in response: " . json_encode($data));
     }
 
     return (string) $token;

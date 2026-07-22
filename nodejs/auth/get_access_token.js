@@ -9,7 +9,12 @@ async function getAccessToken(baseUrl, appId, appSecret) {
     baseUrl,
     '/get-access-token',
     'POST',
-    { appId, appSecret },
+    {
+      appId,
+      appSecret,
+      app_id: appId,
+      app_secret: appSecret,
+    },
     '',
     ''
   );
@@ -19,10 +24,16 @@ async function getAccessToken(baseUrl, appId, appSecret) {
   }
 
   const data = response.data;
-  const token = data.accessToken || data.access_token || (data.data && data.data.accessToken);
+  let token = null;
+
+  if (typeof data.data === 'string') {
+    token = data.data;
+  } else {
+    token = data.accessToken || data.access_token || (data.data && (data.data.accessToken || data.data.access_token));
+  }
 
   if (!token) {
-    throw new Error('Access token not found in response.');
+    throw new Error(`Access token not found in response: ${JSON.stringify(data)}`);
   }
 
   return token;

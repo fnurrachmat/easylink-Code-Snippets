@@ -13,7 +13,12 @@ def get_access_token(base_url: str, app_id: str, app_secret: str) -> str:
         base_url,
         '/get-access-token',
         'POST',
-        {'appId': app_id, 'appSecret': app_secret},
+        {
+            'appId': app_id,
+            'appSecret': app_secret,
+            'app_id': app_id,
+            'app_secret': app_secret
+        },
         '',
         ''
     )
@@ -22,10 +27,14 @@ def get_access_token(base_url: str, app_id: str, app_secret: str) -> str:
         raise Exception(f"Failed to get token: {response}")
 
     data = response['data']
-    token = data.get('accessToken') or data.get('access_token') or (data.get('data') and data.get('data').get('accessToken'))
+    
+    if isinstance(data.get('data'), str):
+        token = data['data']
+    else:
+        token = data.get('accessToken') or data.get('access_token') or (data.get('data') and (data.get('data').get('accessToken') or data.get('data').get('access_token')))
 
     if not token:
-        raise Exception("Access token not found in response.")
+        raise Exception(f"Access token not found in response: {data}")
 
     return token
 

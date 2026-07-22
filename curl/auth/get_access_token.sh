@@ -11,7 +11,9 @@ curl -s -X POST "${BASE_URL}/get-access-token" \
   -H "Accept: application/json" \
   -d '{
     "appId": "'"${APP_ID}"'",
-    "appSecret": "'"${APP_SECRET}"'"
+    "appSecret": "'"${APP_SECRET}"'",
+    "app_id": "'"${APP_ID}"'",
+    "app_secret": "'"${APP_SECRET}"'"
   }'
 
 echo ""
