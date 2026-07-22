@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 BASE_URL="https://sandbox.easylink.id"
-APP_KEY="YOUR_APP_KEY"
+APP_KEY="3f9a7f74-de23-4fde-af75-da7684528a59"
 ACCESS_TOKEN="YOUR_ACCESS_TOKEN"
 
 TIMESTAMP=$(date +%s%3N 2>/dev/null || echo $(($(date +%s)*1000)))
@@ -20,16 +20,40 @@ curl -s -X POST "${BASE_URL}/transfer/create-international-transfer" \
   -H "X-Signature: ${SIGNATURE}" \
   -H "X-EasyLink-Sign: ${SIGNATURE}" \
   -d '{
-    "partnerReferenceNo": "INT-1700000000",
-    "senderCountry": "ID",
-    "receiverCountry": "SG",
-    "sourceCurrency": "IDR",
-    "targetCurrency": "SGD",
-    "amount": 1000000,
-    "recipientName": "Alice Smith",
-    "accountNumber": "9876543210",
-    "bankName": "DBS Bank",
-    "swiftCode": "DBSSSGSG"
+    "reference": "INT-'$(date +%s)'",
+    "source": {
+      "country": "IDN",
+      "currency": "IDR",
+      "segment": "business",
+      "company_name": "PT Merchant Indonesia",
+      "company_trading_name": "Merchant ID",
+      "company_registration_number": "123456789",
+      "company_registration_country": "IDN",
+      "address_line": "Jl. Sudirman No. 1",
+      "address_city": "Jakarta",
+      "address_country": "IDN"
+    },
+    "destination": {
+      "country": "SGP",
+      "currency": "SGD",
+      "segment": "business",
+      "beneficiary_account_type": "Bank Account",
+      "company_name": "DBS Bank Corporate",
+      "swift_code": "DBSSSGSG",
+      "bank_account_number": "9876543210",
+      "address_line": "12 Marina Boulevard",
+      "address_city": "Singapore",
+      "address_country": "SGP",
+      "source_of_income_code": "01",
+      "purpose_code": "01",
+      "relation_code": "04"
+    },
+    "transaction": {
+      "amount": 1000000,
+      "destination_amount": 35,
+      "destination_country": "SGP",
+      "destination_currency": "SGD"
+    }
   }'
 
 echo ""

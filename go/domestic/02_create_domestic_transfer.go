@@ -8,17 +8,24 @@ import (
 
 func main() {
 	baseURL := "https://sandbox.easylink.id"
-	appKey := "YOUR_APP_KEY"
-	privateKeyPem := "/path/to/private.pem"
-	accessToken := "YOUR_ACCESS_TOKEN"
+	appID := "lQNJ0nL07Ucmemaa"
+	appSecret := "HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4"
+	appKey := "3f9a7f74-de23-4fde-af75-da7684528a59"
+	privateKeyPem := "../../private_key.pem"
+
+	accessToken, err := GetAccessToken(baseURL, appID, appSecret)
+	if err != nil {
+		fmt.Printf("Get token error: %v\n", err)
+		return
+	}
 
 	payload := map[string]interface{}{
-		"partnerReferenceNo": fmt.Sprintf("REF-%d", time.Now().Unix()),
-		"amount":             100000,
-		"bankCode":           "BCA",
-		"accountNumber":      "1234567890",
-		"recipientName":      "John Doe",
-		"remark":             "Payment for Order #1001",
+		"reference":           fmt.Sprintf("REF-%d", time.Now().UnixNano()),
+		"amount":              100000,
+		"bank_id":             "1",
+		"account_number":      "1234567890",
+		"account_holder_name": "John Doe",
+		"remark":              "Payment for Order #1001",
 	}
 
 	fmt.Println("Creating Domestic Transfer...")

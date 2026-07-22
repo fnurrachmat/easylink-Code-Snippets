@@ -49,8 +49,10 @@ def generate_easylink_signature(app_key: str, nonce: str, timestamp: str, body: 
     }
 
     for k, v in (body or {}).items():
-        if isinstance(v, (dict, list)):
-            params[k] = json.dumps(v, separators=(',', ':'))
+        if isinstance(v, dict):
+            for k2, v2 in v.items():
+                if not isinstance(v2, (dict, list)):
+                    params[f"{k}.{k2}"] = str(v2)
         else:
             params[k] = str(v)
 

@@ -61,8 +61,12 @@ function generateEasylinkSignature(appKey, nonce, timestamp, body, privateKeyPem
   };
 
   for (const [key, value] of Object.entries(body || {})) {
-    if (typeof value === 'object' && value !== null) {
-      params[key] = JSON.stringify(value);
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      for (const [k2, v2] of Object.entries(value)) {
+        if (typeof v2 !== 'object' || v2 === null) {
+          params[`${key}.${k2}`] = String(v2);
+        }
+      }
     } else {
       params[key] = String(value);
     }

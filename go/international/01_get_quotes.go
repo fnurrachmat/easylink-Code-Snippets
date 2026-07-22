@@ -7,14 +7,21 @@ import (
 
 func main() {
 	baseURL := "https://sandbox.easylink.id"
-	appKey := "YOUR_APP_KEY"
-	privateKeyPem := "/path/to/private.pem"
-	accessToken := "YOUR_ACCESS_TOKEN"
+	appID := "lQNJ0nL07Ucmemaa"
+	appSecret := "HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4"
+	appKey := "3f9a7f74-de23-4fde-af75-da7684528a59"
+	privateKeyPem := "../../private_key.pem"
+
+	accessToken, err := GetAccessToken(baseURL, appID, appSecret)
+	if err != nil {
+		fmt.Printf("Get token error: %v\n", err)
+		return
+	}
 
 	payload := map[string]interface{}{
-		"sourceCurrency": "IDR",
-		"targetCurrency": "SGD",
-		"amount":         1000000,
+		"source_currency":      "IDR",
+		"destination_currency": "SGD",
+		"amount":               1000000,
 	}
 
 	fmt.Println("Fetching Quote...")

@@ -7,8 +7,8 @@ import (
 
 const (
 	baseURL   = "https://sandbox.easylink.id"
-	appID     = "YOUR_APP_ID"
-	appSecret = "YOUR_APP_SECRET"
+	appID     = "lQNJ0nL07Ucmemaa"
+	appSecret = "HrfFeuRmoyBsZhxDi3w3JNdxwYu19lL4"
 )
 
 func GetAccessToken(baseURL, appID, appSecret string) (string, error) {

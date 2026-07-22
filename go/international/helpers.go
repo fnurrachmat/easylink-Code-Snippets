@@ -26,6 +26,34 @@ func PhpUrlEncode(str string) string {
 	return url.QueryEscape(str)
 }
 
+// GetAccessToken requests a fresh B2B Access Token from Easylink API.
+func GetAccessToken(baseURL, appID, appSecret string) (string, error) {
+	payload := map[string]interface{}{
+		"app_id":     appID,
+		"app_secret": appSecret,
+	}
+
+	statusCode, res, err := SendEasylinkRequest(baseURL, "/get-access-token", "POST", payload, "", "", "")
+	if err != nil {
+		return "", err
+	}
+	if statusCode != 200 {
+		return "", fmt.Errorf("request failed with status %d: %v", statusCode, res)
+	}
+
+	if token, ok := res["data"].(string); ok {
+		return token, nil
+	}
+	if token, ok := res["accessToken"].(string); ok {
+		return token, nil
+	}
+	if token, ok := res["access_token"].(string); ok {
+		return token, nil
+	}
+
+	return "", fmt.Errorf("access token not found in response: %v", res)
+}
+
 // GenerateEasylinkSignature generates RSA-SHA256 signature for Easylink API requests.
 func GenerateEasylinkSignature(appKey, nonce, timestamp string, body map[string]interface{}, privateKeyPem string) (string, error) {
 	params := make(map[string]string)
@@ -35,9 +63,10 @@ func GenerateEasylinkSignature(appKey, nonce, timestamp string, body map[string]
 
 	for k, v := range body {
 		switch val := v.(type) {
-		case map[string]interface{}, []interface{}:
-			jsonBytes, _ := json.Marshal(val)
-			params[k] = string(jsonBytes)
+		case map[string]interface{}:
+			for k2, v2 := range val {
+				params[fmt.Sprintf("%s.%s", k, k2)] = fmt.Sprintf("%v", v2)
+			}
 		default:
 			params[k] = fmt.Sprintf("%v", val)
 		}
@@ -61,6 +90,9 @@ func GenerateEasylinkSignature(appKey, nonce, timestamp string, body map[string]
 	pemData := []byte(privateKeyPem)
 	if !strings.Contains(privateKeyPem, "-----BEGIN") {
 		data, err := os.ReadFile(privateKeyPem)
+		if err != nil {
+			data, err = os.ReadFile("private_key.pem")
+		}
 		if err != nil {
 			return "", fmt.Errorf("read private key file error: %w", err)
 		}

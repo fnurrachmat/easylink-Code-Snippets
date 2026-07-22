@@ -35,9 +35,10 @@ func GenerateEasylinkSignature(appKey, nonce, timestamp string, body map[string]
 
 	for k, v := range body {
 		switch val := v.(type) {
-		case map[string]interface{}, []interface{}:
-			jsonBytes, _ := json.Marshal(val)
-			params[k] = string(jsonBytes)
+		case map[string]interface{}:
+			for k2, v2 := range val {
+				params[fmt.Sprintf("%s.%s", k, k2)] = fmt.Sprintf("%v", v2)
+			}
 		default:
 			params[k] = fmt.Sprintf("%v", val)
 		}

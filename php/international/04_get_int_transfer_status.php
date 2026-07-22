@@ -15,7 +15,7 @@ $privateKeyPem = __DIR__ . '/../../private_key.pem';
 $accessToken   = getAccessToken($baseUrl, $appId, $appSecret);
 
 $payload = [
-    'partner_reference_no' => 'INT-1700000000'
+    'reference' => 'INT-1700000000'
 ];
 
 echo "Fetching International Transfer Status...\n";

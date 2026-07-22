@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 BASE_URL="https://sandbox.easylink.id"
-APP_KEY="YOUR_APP_KEY"
+APP_KEY="3f9a7f74-de23-4fde-af75-da7684528a59"
 ACCESS_TOKEN="YOUR_ACCESS_TOKEN"
 
 TIMESTAMP=$(date +%s%3N 2>/dev/null || echo $(($(date +%s)*1000)))
@@ -20,11 +20,11 @@ curl -s -X POST "${BASE_URL}/v2/transfer/create-domestic-transfer" \
   -H "X-Signature: ${SIGNATURE}" \
   -H "X-EasyLink-Sign: ${SIGNATURE}" \
   -d '{
-    "partnerReferenceNo": "REF-1700000000",
+    "reference": "REF-'$(date +%s)'",
     "amount": 100000,
-    "bankCode": "BCA",
-    "accountNumber": "1234567890",
-    "recipientName": "John Doe",
+    "bank_id": "1",
+    "account_number": "1234567890",
+    "account_holder_name": "John Doe",
     "remark": "Payment for Order #1001"
   }'
 

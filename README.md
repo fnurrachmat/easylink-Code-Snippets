@@ -5,6 +5,9 @@
 
 Repositori ini berisi kumpulan **Code Snippets** siap pakai (*copy-paste ready*) yang dikategorikan berdasarkan modul **Domestic** dan **International** untuk mengintegrasikan **Easylink API** di berbagai bahasa pemrograman.
 
+📖 **Dokumentasi API Resmi:** [doc.easylink.id](https://doc.easylink.id)
+
+
 Bahasa & Lingkungan yang Didukung:
 - 🐘 **PHP** (Native cURL + OpenSSL, tanpa Composer)
 - 🟢 **Node.js / JavaScript** (`crypto` module + `fetch`)
@@ -123,10 +126,23 @@ node nodejs/auth/get_access_token.js
 # Domestic Payout
 node nodejs/domestic/01_verify_bank_account.js
 node nodejs/domestic/02_create_domestic_transfer.js
+node nodejs/domestic/03_get_domestic_transfer_status.js
+node nodejs/domestic/04_get_balances.js
+node nodejs/domestic/05_get_flows.js
+node nodejs/domestic/06_get_remittance_list.js
+node nodejs/domestic/07_supported_banks.js
+node nodejs/domestic/08_supported_ewallets.js
 
 # International Payout
 node nodejs/international/01_get_quotes.js
 node nodejs/international/02_create_int_transfer.js
+node nodejs/international/03_confirm_int_transfer.js
+node nodejs/international/04_get_int_transfer_status.js
+node nodejs/international/05_get_countries_currencies.js
+node nodejs/international/06_get_currencies.js
+node nodejs/international/07_get_remittance_purposes.js
+node nodejs/international/08_get_sources_of_funds.js
+node nodejs/international/09_get_relationships.js
 
 # Webhook Verification
 node nodejs/webhook/verify_signature.js
@@ -147,10 +163,23 @@ python3 python/auth/get_access_token.py
 # Domestic Payout
 python3 python/domestic/01_verify_bank_account.py
 python3 python/domestic/02_create_domestic_transfer.py
+python3 python/domestic/03_get_domestic_transfer_status.py
+python3 python/domestic/04_get_balances.py
+python3 python/domestic/05_get_flows.py
+python3 python/domestic/06_get_remittance_list.py
+python3 python/domestic/07_supported_banks.py
+python3 python/domestic/08_supported_ewallets.py
 
 # International Payout
 python3 python/international/01_get_quotes.py
 python3 python/international/02_create_int_transfer.py
+python3 python/international/03_confirm_int_transfer.py
+python3 python/international/04_get_int_transfer_status.py
+python3 python/international/05_get_countries_currencies.py
+python3 python/international/06_get_currencies.py
+python3 python/international/07_get_remittance_purposes.py
+python3 python/international/08_get_sources_of_funds.py
+python3 python/international/09_get_relationships.py
 
 # Webhook Verification
 python3 python/webhook/verify_signature.py
@@ -168,10 +197,23 @@ go run go/auth/helpers.go go/auth/get_access_token.go
 # Domestic Payout
 go run go/domestic/helpers.go go/domestic/01_verify_bank_account.go
 go run go/domestic/helpers.go go/domestic/02_create_domestic_transfer.go
+go run go/domestic/helpers.go go/domestic/03_get_domestic_transfer_status.go
+go run go/domestic/helpers.go go/domestic/04_get_balances.go
+go run go/domestic/helpers.go go/domestic/05_get_flows.go
+go run go/domestic/helpers.go go/domestic/06_get_remittance_list.go
+go run go/domestic/helpers.go go/domestic/07_supported_banks.go
+go run go/domestic/helpers.go go/domestic/08_supported_ewallets.go
 
 # International Payout
 go run go/international/helpers.go go/international/01_get_quotes.go
 go run go/international/helpers.go go/international/02_create_int_transfer.go
+go run go/international/helpers.go go/international/03_confirm_int_transfer.go
+go run go/international/helpers.go go/international/04_get_int_transfer_status.go
+go run go/international/helpers.go go/international/05_get_countries_currencies.go
+go run go/international/helpers.go go/international/06_get_currencies.go
+go run go/international/helpers.go go/international/07_get_remittance_purposes.go
+go run go/international/helpers.go go/international/08_get_sources_of_funds.go
+go run go/international/helpers.go go/international/09_get_relationships.go
 
 # Webhook Verification
 go run go/webhook/verify_signature.go
@@ -189,10 +231,23 @@ bash curl/auth/get_access_token.sh
 # Domestic Payout
 bash curl/domestic/01_verify_bank_account.sh
 bash curl/domestic/02_create_domestic_transfer.sh
+bash curl/domestic/03_get_domestic_transfer_status.sh
+bash curl/domestic/04_get_balances.sh
+bash curl/domestic/05_get_flows.sh
+bash curl/domestic/06_get_remittance_list.sh
+bash curl/domestic/07_supported_banks.sh
+bash curl/domestic/08_supported_ewallets.sh
 
 # International Payout
 bash curl/international/01_get_quotes.sh
 bash curl/international/02_create_int_transfer.sh
+bash curl/international/03_confirm_int_transfer.sh
+bash curl/international/04_get_int_transfer_status.sh
+bash curl/international/05_get_countries_currencies.sh
+bash curl/international/06_get_currencies.sh
+bash curl/international/07_get_remittance_purposes.sh
+bash curl/international/08_get_sources_of_funds.sh
+bash curl/international/09_get_relationships.sh
 
 # Webhook Verification
 bash curl/webhook/verify_signature.sh
